@@ -2,12 +2,19 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import "./AuthenticationForm.css";
 import { Input } from "../input/Input";
+import { useAuth } from "../../context/useAuth";
+
+export enum AuthenticationFormMode {
+  SIGNIN = "signin",
+  SIGNUP = "signup",
+}
 
 interface AuthenticationFormProps {
-  mode: "signin" | "signup";
+  mode: AuthenticationFormMode;
 }
 
 export const AuthenticationForm = ({ mode }: AuthenticationFormProps) => {
+  const { registerUser, loginUser } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -25,9 +32,10 @@ export const AuthenticationForm = ({ mode }: AuthenticationFormProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (mode === "signup" && formData.password !== formData.confirmPassword) {
-      alert("Passwords don't match!");
-      return;
+    if (mode === AuthenticationFormMode.SIGNIN) {
+      loginUser(formData.email, formData.password);
+    } else {
+      registerUser(formData.email, formData.password);
     }
 
     // Handle authentication logic here
@@ -37,9 +45,11 @@ export const AuthenticationForm = ({ mode }: AuthenticationFormProps) => {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2>{mode === "signin" ? "Sign In" : "Sign Up"}</h2>
+        <h2>
+          {mode === AuthenticationFormMode.SIGNIN ? "Sign In" : "Sign Up"}
+        </h2>
         <form onSubmit={handleSubmit} className="auth-form">
-          {mode === "signup" && (
+          {mode === AuthenticationFormMode.SIGNUP && (
             <Input
               id="name"
               label="Full Name"
@@ -70,7 +80,7 @@ export const AuthenticationForm = ({ mode }: AuthenticationFormProps) => {
             value={formData.password}
           />
 
-          {mode === "signup" && (
+          {mode === AuthenticationFormMode.SIGNUP && (
             <Input
               id="confirmPassword"
               label="Confirm Password"
@@ -83,12 +93,12 @@ export const AuthenticationForm = ({ mode }: AuthenticationFormProps) => {
           )}
 
           <button type="submit" className="auth-button">
-            {mode === "signin" ? "Sign In" : "Sign Up"}
+            {mode === AuthenticationFormMode.SIGNIN ? "Sign In" : "Sign Up"}
           </button>
         </form>
 
         <div className="auth-footer">
-          {mode === "signin" ? (
+          {mode === AuthenticationFormMode.SIGNIN ? (
             <p>
               Don't have an account? <Link to="/signup">Sign up here</Link>
             </p>

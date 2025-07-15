@@ -1,7 +1,9 @@
 import "./navbar.css";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../context/useAuth";
 
 export const Navbar = () => {
+  const { logout } = useAuth();
   return (
     <nav>
       <div className="nav-content">
@@ -10,12 +12,9 @@ export const Navbar = () => {
         </Link>
         <input type="text" className="search-bar" placeholder="Search" />
         <div className="nav-buttons">
-          <Link to="/signin">
-            <button className="nav-btn">Log In</button>
-          </Link>
-          <Link to="/signup">
-            <button className="nav-btn primary">Sign Up</button>
-          </Link>
+          <button className="nav-btn" onClick={() => logout()}>
+            Log Out
+          </button>
         </div>
       </div>
     </nav>
